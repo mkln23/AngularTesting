@@ -1,16 +1,54 @@
 import { TestBed } from '@angular/core/testing';
 
 import { UserService } from './user.service';
+import { UserInterface } from '../types/user.interface';
+import { UtilsService } from './utils.service';
 
 describe('UserService', () => {
-  let service: UserService;
+  let userService: UserService;
+  let mockUtilService = {
+    add: jest.fn()
+  }
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(UserService);
+    TestBed.configureTestingModule({
+      providers: [
+        UserService,
+        {provide: UtilsService, useValue: mockUtilService}
+      ]
+    });
+    userService = TestBed.inject(UserService);
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(userService).toBeTruthy();
   });
+  describe('addUser', () => {
+    it('should add a new user', () => {
+      const user: UserInterface = {
+        id: 10,
+        name: 'Mukilan',
+      }
+      userService.addUser(user)
+      expect(userService.users).toEqual([user])
+    })
+  })
+  describe('removeUser', () => {
+    it('should remove an existing user', () => {
+      const user: UserInterface = {
+        id: 10,
+        name: 'Mukilan',
+      }
+      userService.users = [user]
+      userService.removeUser(10)
+      expect(userService.users).toEqual([])
+    })
+  })
+  describe('addUserIds', () => {
+    it('should add user id', () => {
+      mockUtilService.add.mockReturnValue(8)
+      expect(userService.addUserIds(3, 5)).toEqual(8)
+    })
+
+  })
 });
